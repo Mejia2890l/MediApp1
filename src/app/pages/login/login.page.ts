@@ -19,29 +19,29 @@ export class LoginPage {
 
   constructor(private api: ApiService, private router: Router) {}
 
-  async iniciarSesion() {
+  iniciarSesion() {
     this.mensaje = '';
 
-    try {
-      const res: any = await this.api.login(this.numero_usuario, this.password).toPromise();
-
-      this.api.setToken(res.token);
-      const usuario = res.usuario;
+    this.api.login(this.numero_usuario, this.password).subscribe({
+      next: (res: any) => {
+        this.api.setToken(res.token);
+        const usuario = res.usuario;
 
       console.log('🧪 DEBUG => requiere_cambio_password:', usuario.requiere_cambio_password, '| tipo:', typeof usuario.requiere_cambio_password);
 
       // Evaluar tanto boolean como número (por si viene como 1)
-      if (usuario.requiere_cambio_password === true || usuario.requiere_cambio_password === 1) {
-        console.log('➡️ Redirigiendo a /cambiar-password');
-        this.router.navigate(['/cambiar-password']);
-      } else {
-        console.log('➡️ Redirigiendo a /home');
-        this.router.navigate(['/home']);
+        if (usuario.requiere_cambio_password === true || usuario.requiere_cambio_password === 1) {
+          console.log('➡️ Redirigiendo a /cambiar-password');
+          this.router.navigate(['/cambiar-password']);
+        } else {
+          console.log('➡️ Redirigiendo a /home');
+          this.router.navigate(['/home']);
+        }
+      },
+      error: () => {
+        console.error('❌ Error en login');
+        this.mensaje = 'Credenciales incorrectas';
       }
-
-    } catch (error: any) {
-      console.error('❌ Error en login:', error);
-      this.mensaje = 'Credenciales incorrectas';
-    }
+    });
   }
 }

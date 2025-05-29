@@ -5,9 +5,6 @@ require('dotenv').config();
 
 exports.login = async (req, res) => {
   const { numero_usuario, password } = req.body;
-  console.log('🔐 LOGIN DEBUG');
-  console.log('Usuario recibido:', numero_usuario);
-  console.log('Contraseña recibida:', password);
 
   try {
     // 1. Busca el usuario
@@ -21,12 +18,10 @@ exports.login = async (req, res) => {
       return res.status(404).json({ mensaje: 'Usuario no encontrado' });
     }
 
-    const usuario = rows[0];
-    console.log('Hash en BD:', usuario.password);
+      const usuario = rows[0];
 
     // 2. Compara contraseñas
     const passwordValida = await bcrypt.compare(password, usuario.password);
-    console.log('bcrypt.compare result:', passwordValida);
 
     if (!passwordValida) {
       console.log('❌ La contraseña NO coincide');
@@ -50,5 +45,26 @@ exports.login = async (req, res) => {
   } catch (error) {
     console.error('⚠️ Error en login:', error);
     res.status(500).json({ mensaje: 'Error al iniciar sesión' });
+  }
+};
+
+exports.cambiarPassword = async (req, res) => {
+  const { nuevaPassword } = req.body;
+  const usuarioId = req.usuario?.id;
+
+  if (!nuevaPassword || !usuarioId) {
+    return res.status(400).json({ mensaje: 'Datos incompletos' });
+  }
+
+  try {
+    const hash = await bcrypt.hash(nuevaPassword, 10);
+    await pool.query(
+      'UPDATE usuarios SET password = ?, requiere_cambio_password = false WHERE id = ?',
+      [hash, usuarioId]
+    );
+    res.json({ mensaje: 'Contraseña actualizada correctamente' });
+  } catch (error) {
+    console.error('❌ Error al cambiar contraseña:', error);
+    res.status(500).json({ mensaje: 'Error al cambiar contraseña' });
   }
 };
