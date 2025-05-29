@@ -18,3 +18,15 @@ exports.crearUsuario = async (req, res) => {
     res.status(500).json({ mensaje: 'Error al crear usuario', error });
   }
 };
+
+exports.listarUsuarios = async (req, res) => {
+  try {
+    const [rows] = await pool.query(
+      'SELECT id, nombre, area, puesto, numero_usuario, rol FROM usuarios'
+    );
+    res.json(rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: 'Error al obtener usuarios', error });
+  }
+};

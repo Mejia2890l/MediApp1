@@ -44,7 +44,13 @@ exports.obtenerRegistros = async (req, res) => {
     }
 
     console.log('🔢 Registros encontrados:', registros.length);
-    res.json(registros);
+    const parsed = registros.map(reg => ({
+      ...reg,
+      datos_json: (() => {
+        try { return JSON.parse(reg.datos_json); } catch { return reg.datos_json; }
+      })()
+    }));
+    res.json(parsed);
   } catch (error) {
     console.error('❌ Error al obtener registros:', error);
     res.status(500).json({ mensaje: 'Error al obtener registros' });

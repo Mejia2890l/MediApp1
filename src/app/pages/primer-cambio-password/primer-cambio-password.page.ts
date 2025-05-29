@@ -19,7 +19,7 @@ export class PrimerCambioPasswordPage {
 
   constructor(private api: ApiService, private router: Router) {}
 
-  async cambiar() {
+  cambiar() {
     this.mensaje = '';
 
     if (this.nuevaPassword !== this.confirmarPassword) {
@@ -27,12 +27,14 @@ export class PrimerCambioPasswordPage {
       return;
     }
 
-    try {
-      await this.api.cambiarPassword(this.nuevaPassword).toPromise();
-      alert('Contraseña actualizada correctamente');
-      this.router.navigate(['/home']);
-    } catch (error) {
-      this.mensaje = 'Error al cambiar la contraseña';
-    }
+    this.api.cambiarPassword(this.nuevaPassword).subscribe({
+      next: () => {
+        alert('Contraseña actualizada correctamente');
+        this.router.navigate(['/home']);
+      },
+      error: () => {
+        this.mensaje = 'Error al cambiar la contraseña';
+      }
+    });
   }
 }
