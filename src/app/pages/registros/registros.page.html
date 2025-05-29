@@ -1,0 +1,67 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Registros guardados</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- 🔍 Buscador -->
+  <ion-item>
+    <ion-input
+      placeholder="Buscar por nombre o medidor"
+      [(ngModel)]="busqueda"
+      (ionInput)="filtrar()"
+    ></ion-input>
+  </ion-item>
+
+  <!-- 🧩 Filtros booleanos -->
+  <ion-item>
+    <ion-label>Habitada</ion-label>
+    <ion-select [(ngModel)]="habitada" (ionChange)="filtrar()">
+      <ion-select-option value="">Todos</ion-select-option>
+      <ion-select-option value="true">Sí</ion-select-option>
+      <ion-select-option value="false">No</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item>
+    <ion-label>Contrato</ion-label>
+    <ion-select [(ngModel)]="contrato" (ionChange)="filtrar()">
+      <ion-select-option value="">Todos</ion-select-option>
+      <ion-select-option value="true">Sí</ion-select-option>
+      <ion-select-option value="false">No</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item>
+    <ion-label>Medidor</ion-label>
+    <ion-select [(ngModel)]="tieneMedidor" (ionChange)="filtrar()">
+      <ion-select-option value="">Todos</ion-select-option>
+      <ion-select-option value="true">Sí</ion-select-option>
+      <ion-select-option value="false">No</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <!-- ♻️ Lista de resultados -->
+  <ion-spinner *ngIf="cargando" name="dots"></ion-spinner>
+
+  <div *ngIf="!cargando && registrosFiltrados.length === 0">
+    <p>No se encontraron registros.</p>
+  </div>
+
+  <ion-card *ngFor="let registro of registrosFiltrados">
+    <img *ngIf="registro.foto_url" [src]="registro.foto_url" />
+    <ion-card-header>
+      <ion-card-title>{{ registro.datos_json?.nombre || 'Sin nombre' }}</ion-card-title>
+      <ion-card-subtitle>{{ registro.fecha | date:'short' }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>Habitada:</strong> {{ registro.datos_json?.habitada ? 'Sí' : 'No' }}</p>
+      <p><strong>Contrato:</strong> {{ registro.datos_json?.contrato ? 'Sí' : 'No' }}</p>
+      <p><strong>Medidor:</strong> {{ registro.datos_json?.tieneMedidor ? 'Sí' : 'No' }}</p>
+      <p><strong>Medidor No.:</strong> {{ registro.datos_json?.numeroMedidor }}</p>
+      <p><strong>Ubicación:</strong> {{ registro.latitud }}, {{ registro.longitud }}</p>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

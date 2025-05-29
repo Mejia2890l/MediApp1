@@ -1,0 +1,24 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Iniciar sesión</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-item>
+    <ion-label position="floating">Número de usuario</ion-label>
+    <ion-input type="text" [(ngModel)]="numero_usuario"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="floating">Contraseña</ion-label>
+    <ion-input type="password" [(ngModel)]="password"></ion-input>
+  </ion-item>
+
+  <ion-button expand="block" class="ion-margin-top" (click)="iniciarSesion()">
+    Entrar
+  </ion-button>
+
+
+  <ion-text color="danger" *ngIf="mensaje">{{ mensaje }}</ion-text>
+</ion-content>
